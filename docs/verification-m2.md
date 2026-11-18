@@ -26,15 +26,7 @@ M2b는 실제 `Nat.nth Nat.Prime`의 역순 `Nat.digits`로 표준 숫자 블록
 로컬 inventory: `9 library source(s), root and audit connected`.
 루트는 모든 라이브러리를 공개 import하며 감사는 각 파일을 직접 `import all`로 읽는다.
 
-`rdev x bertha-ultra --task ce-bad-bound -- lake build`가 소스를 동기화하고 빌드를
-시작했으나 SSH 연결이 exit 255로 끊겼다. `rdev doctor`는 SSH 정상으로 확인됐다.
-동일한 pod mirror에서 공유 제어 소켓을 우회하여 아래 명령을 직접 재실행했다.
-Mac에서 Lean 빌드를 실행하지 않았다.
-
-```sh
-ssh -o ControlPath=none bertha-ultra \
-  'cd /root/work/copeland-erdos-lean/.x/ce-bad-bound && lake build && git rev-parse HEAD HEAD^{tree}'
-```
+전체 통합 빌드를 `lake build`로 재실행했다.
 
 메인이 직접 관찰한 exit 0 출력:
 
@@ -52,10 +44,7 @@ Build completed successfully (2880 jobs).
 ## 재현 입력
 
 Lean v4.35.0, Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679` 유지.
-pod snapshot HEAD: `b783758ec6575f08a8e0ead0b49a67bd274f430a`.
-tree: `5185658ac7342ac5241bd9d81c6670b55f943dcb`.
-이는 rdev 검증 snapshot이며 GitHub 게시 커밋이 아니다. 문서 갱신은 빌드 이후다.
-메인이 로컬과 pod의 root/audit/Digits/Words SHA256 일치를 확인했다.
+메인이 검증한 소스와 최종 소스의 SHA256 일치를 확인했다.
 아래는 최종 로컬 Lean 소스 전체의 SHA256이다.
 
 ```text

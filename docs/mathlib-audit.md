@@ -5,7 +5,7 @@
 후속 상태: 이 문서는 최초 조사의 기록이다. 2026-11-18에 유한 모멘트 도구와
 최종 정규성까지 구현·빌드했으며, 현재 상태는 [최종 검증](verification-complete.md)을 따른다.
 
-- 소스: `/Users/jaeho/projects/playground/kuratowski/.lake/packages/mathlib`
+- 소스: [Mathlib](https://github.com/leanprover-community/mathlib4/tree/56a005855ea17e0b0958f73ec801ae140b0a1679)
 - SHA: `56a005855ea17e0b0958f73ec801ae140b0a1679`
 - Lean: `leanprover/lean4:v4.35.0`
 - 조사: `gpt-6.1-sol` / `xhigh` 작업자. 메인 Astra가 핵심 소수 하한과 실수 전개 소스를 추가 확인했다.

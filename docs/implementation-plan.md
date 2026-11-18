@@ -58,13 +58,9 @@ M4는 정상 숫자열의 재등장 성질로 표준 실수 전개를 복원했�
 - PrimeConcatenation: 끝나는 소수 경계에 대한 수렴에서 멈추지 않는다. 임의의 M까지 증명한다.
 - RealBridge: 정규성에서 무한히 많은 0/1을 얻어 꼬리의 모호성을 제거한다.
 
-## 4. 비용과 환경
+## 4. 의존성과 변경 범위
 
-- 기존 Kuratowski와 호환되는 Mathlib SHA를 M0에서 실제 lockfile로 고정했다.
-- 새 `.lake/packages`는 같은 버전이 있는 sibling에서 APFS clone으로 시드한다.
-  `cp -R`, `rsync`, worktree별 새 Mathlib 다운로드를 하지 않는다.
-- 무거운 빌드/테스트는 사용자 지침의 `rdev` 개발 pod를 사용한다. offload hook이 제공하는 명령을 따른다.
-  로컬의 작은 소스 조사·stdlib 유한 검사는 무거운 Lean 빌드와 구별한다.
+- Lean과 Mathlib 버전을 lockfile로 고정한다.
 - 기존 회사 블로그, SW, Kuratowski 작업트리는 수정하지 않는다.
 
 ## 5. Continuous AI는 증명 계약 이후에 연결

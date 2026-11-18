@@ -36,7 +36,7 @@ Chebyshev와 Bertrand 정리로 접합 경계와 마지막 불완전 블록의 �
 ## 검증
 
 Lean `v4.35.0`, Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679`에 고정했다.
-2026-11-18 pod 통합 빌드, 새로 실행한 공리 감사, 공개 예제를 통과했다.
+2026-11-18 통합 빌드, 새로 실행한 공리 감사, 공개 예제를 통과했다.
 23개 라이브러리와 루트의 **472개 선언**을 비공개 보조정리까지 감사했으며,
 사용 공리는 `propext`, `Classical.choice`, `Quot.sound`뿐이다.
 선언 수는 생성·비공개 선언을 포함하며 정리의 개수와 다르다.
@@ -51,8 +51,7 @@ lake env lean CopelandErdosAudit.lean
 lake env lean examples/Normality.lean
 ```
 
-개발 환경의 무거운 빌드는 `rdev x bertha-ultra --task ce-geometric -- lake build`로
-실행했다. Python의 유한 검사는 별도의 회귀 검사이며 일반 정리의 증명이 아니다.
+Python의 유한 검사는 별도의 회귀 검사이며 일반 정리의 증명이 아니다.
 GitHub에서도 같은 빌드·검사가 통과했다. 원격 실행 결과와 자동화 상태는
 [도입 기록](docs/continuous-ai-adoption.md)에서 구별한다.
 

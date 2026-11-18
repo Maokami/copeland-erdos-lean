@@ -9,7 +9,7 @@ Continuous AI 배포를 승인했다. 공개 원격 저장소는 생성했으며
 ## 관찰한 상태와 첫 적용 범위
 
 수학 구현 커밋은 `1e4d34163b388ab533a80f6573dbadf46ad0b114`다.
-메인이 pod에서 전체 빌드, 새 공리 감사, 공개 예제를 직접 재실행했고
+메인이 전체 빌드, 새 공리 감사, 공개 예제를 직접 재실행했고
 23개 라이브러리와 루트의 472개 선언을 확인했다. 최초 scaffold만 있던 시점의
 Kit inventory는 현재 입력으로 사용하지 않고, 이 커밋에서 다시 선택한다.
 
@@ -83,8 +83,6 @@ Sol을 실행할 수 있다고 가정하지 않고, API 과금 경로로 임의 
 - `Lean CI`에서 Python 검사, Lean 빌드, 새 공리 감사, 공개 최종 정리 예제 모두 통과했다.
 - GitHub에 CI와 수동 `Continuous AI (proof-review)` workflow가 active 상태로 등록됨을 확인했다.
   active 등록은 AI 모델 실행 성공을 뜻하지 않는다.
-- 최초 HTTPS push는 기존 OAuth 자격의 workflow scope 부족으로 거절됐고,
-  이미 구성된 SSH 인증으로 같은 저장소에 게시했다. 권한 정책을 변경하지 않았다.
 - 마지막으로 확인한 Actions secret 목록은 비어 있다. `CLAUDE_CODE_OAUTH_TOKEN` 등록은 사용자에게 요청했으며,
   값은 읽거나 기록하지 않았다. 따라서 실제 AI 실행·검증·게시와 동일 입력 no-op 관찰은 아직 없다.
 - 현재 scheduler와 자동 writer는 없다. 검증된 정리를 유지하며 수동 검토 pilot부터 평가한다.

@@ -24,7 +24,7 @@
 블록 지시함수에 대해 이 조건과 곱 공간 대응을 별도로 증명해야 한다.
 소수 자릿수의 독립성을 가정하거나 증명한 결과가 아니다.
 
-작업자의 pod 단독 파일 검사(exit 0, 경고 없음), 모듈 빌드(1141 jobs), 주요 선언 9개에 대한
+작업자의 단독 파일 검사(exit 0, 경고 없음), 모듈 빌드(1141 jobs), 주요 선언 9개에 대한
 직접 공리 출력이 통과했다. 메인은 아래 통합 빌드로 전체 선언을 다시 감사했다.
 
 ## M1c: 소수 개수와 다음 소수
@@ -41,7 +41,7 @@ Chebyshev 보정항은 `log(n+1)=o(n)`에서 제어하고, 최종 나눗셈에�
 연속 소수에 관한 정리는 Mathlib의 Bertrand 정리와 nth-prime API로 연결한다.
 새 소수정리 증명이나 미증명 수학 가정은 없다.
 
-작업자의 pod 모듈 빌드(2868 jobs)와 공개 선언 7개의 공리 출력이 통과했다.
+작업자의 모듈 빌드(2868 jobs)와 공개 선언 7개의 공리 출력이 통과했다.
 
 ## 통합 및 메인의 재실행
 
@@ -52,7 +52,7 @@ Chebyshev 보정항은 `log(n+1)=o(n)`에서 제어하고, 최종 나눗셈에�
 
 ```sh
 python3 -I scripts/check_lean_inventory.py
-rdev x bertha-ultra --task ce-prime-bounds -- lake build
+lake build
 git diff --check
 ```
 
@@ -69,11 +69,7 @@ Build completed successfully (2874 jobs).
 감사 구현의 음성 검사는 M0에서 수행했으며, 이번에는 그 검사를 반복하지 않고
 동일한 감사 구현의 import-all 범위를 두 새 모듈로 확장했다.
 
-## 소스와 환경
-
-메인의 최종 빌드 mirror HEAD: `a46fef2b8123cd382b929378274dc9011afd8261`.
-tree: `a26b12f9add708486d16d59c6255dd1b0b983271`.
-이것은 rdev 검증 snapshot이며 GitHub 게시 커밋이 아니다. 이 문서와 README 갱신은 그 이후다.
+## 검증 소스
 
 메인이 확인했고 작업자의 검증 파일과도 일치한 SHA256:
 
@@ -85,8 +81,7 @@ f8dbb20f6f01a5984ffaebf49d62d4a551ee8d2d8d755b5f552bc9297ed8ca68  CopelandErdos/
 ```
 
 Lean v4.35.0 / Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679`는 변경하지 않았다.
-작업별 pod mirror에서 기존 Linux 패키지를 재사용하고, 필요한 추가 공식 사전 빌드 캐시를 받았다.
-Mac에서 무거운 Lean 빌드를 실행하지 않았다. 이번 변경은 로컬 미커밋 상태이며 원격 게시하지 않았다.
+이번 변경은 로컬 미커밋 상태이며 원격 게시하지 않았다.
 
 ## 남은 범위
 

@@ -24,8 +24,7 @@ list/finset 변환의 중복 보존, 소수 cutoff의 inclusive/exclusive 차이
 ```sh
 python3 -I scripts/check_lean_inventory.py
 python3 -I scripts/check_combinatorics.py
-rdev x bertha-ultra --task ce-geometric -- lake build
-# 동일한 동기화 pod mirror에서 별도로 새로 실행:
+lake build
 lake env lean CopelandErdosAudit.lean
 lake env lean examples/Normality.lean
 ```
@@ -51,12 +50,6 @@ Python 회귀 결과: occurrence/residue 7,650건, append 53,790건,
 ## 입력과 출처
 
 Lean v4.35.0 / Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679`.
-메인 재실행 pod snapshot `848e31a23f78929d31be8528d4d2535640c196f2`,
-tree `2c232a4ec108b8d7101faad6706fea8150edb4c1`.
-이것은 rdev 검증 snapshot이며 공개 GitHub 커밋과 다르다. 문서 완료 갱신은 이후다.
-모든 무거운 Lean 실행은 Linux pod에서 수행했다.
-초기 작업자 일부의 공유 package symlink에서 산출물 경합이 발생해 각 작업의 독립적인
-Linux package 복사본으로 바꾼 뒤 최종 검증했다. Mac package는 APFS clone을 유지했다.
 
 최종 소스 SHA256:
 
@@ -92,7 +85,7 @@ de654f7cfea120bdf80963f361ce5706e45ee49e7e8dd091b0ec52193c387030  .github/workfl
 
 ## 공개 배포와의 구분
 
-위 기록은 실제 소스 검토와 pod에서 실행한 검증이다.
+위 기록은 실제 소스 검토와 실행한 검증이다.
 GitHub CI 및 Continuous AI pilot의 run URL/실행 결과는
 [별도 도입 기록](continuous-ai-adoption.md)에 남긴다.
 이번 정규성 구현을 예약 Continuous AI가 자율적으로 완성했다고 주장하지 않는다.
