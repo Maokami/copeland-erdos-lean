@@ -1,4 +1,4 @@
-name = "copeland-erdos"
+name = "copelandErdos"
 defaultTargets = ["CopelandErdos", "CopelandErdosAudit"]
 
 [leanOptions]

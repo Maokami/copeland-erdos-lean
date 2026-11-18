@@ -1,0 +1,59 @@
+# 결정적 CI. AI와 secret을 쓰지 않는다.
+# 브랜치 보호의 필수 상태 검사 이름은 "Lean CI"다.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lean:
+    name: Lean CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      # Mathlib 및 Lean 빌드 캐시를 풀 공간을 확보한다.
+      - name: 디스크 공간 확보
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: false
+          haskell: false
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - name: 체크아웃
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Python 검사
+        run: |
+          python3 -I scripts/check_lean_inventory.py
+          python3 -I scripts/check_combinatorics.py
+
+      # 사용자 정의 inventory 검사가 루트 및 private-inclusive 감사의 import를 확인한다.
+      - name: Lean 빌드
+        uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64 # v1.7.0
+        with:
+          build: true
+          test: false
+          lint: false
+          mk_all-check: false
+
+      # 캐시에서 복원된 빌드가 감사 파일의 재실행을 생략하지 않도록 직접 실행한다.
+      - name: 공리 감사 (새로 실행)
+        run: lake env lean CopelandErdosAudit.lean
+
+      - name: 공개 정규성 API 예제
+        run: lake env lean examples/Normality.lean

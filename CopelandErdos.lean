@@ -1,1 +1,25 @@
-import CopelandErdos.Words.Occurrences
+module
+
+public import CopelandErdos.Analysis.GeometricBounds
+public import CopelandErdos.Digits.BlockStream
+public import CopelandErdos.Digits.NatWord
+public import CopelandErdos.Digits.PrimeStream
+public import CopelandErdos.Digits.RealExpansion
+public import CopelandErdos.Normality.BoundaryCriterion
+public import CopelandErdos.Normality.NormalDigits
+public import CopelandErdos.Normality.PrefixTransfer
+public import CopelandErdos.Normality.PrimeConcatenation
+public import CopelandErdos.Normality.RealBridge
+public import CopelandErdos.NumberTheory.BadIntegerCounting
+public import CopelandErdos.NumberTheory.BadIntegers
+public import CopelandErdos.NumberTheory.BadPrimeMass
+public import CopelandErdos.NumberTheory.PrimeBounds
+public import CopelandErdos.NumberTheory.PrimeDigitMass
+public import CopelandErdos.NumberTheory.PrimePrefixBounds
+public import CopelandErdos.Probability.FiniteMoments
+public import CopelandErdos.Words.BadWordArithmetic
+public import CopelandErdos.Words.BadWords
+public import CopelandErdos.Words.BlockCounts
+public import CopelandErdos.Words.Concatenation
+public import CopelandErdos.Words.Occurrences
+public import CopelandErdos.Words.UniformBlocks

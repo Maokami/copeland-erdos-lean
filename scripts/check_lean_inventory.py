@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check that the root imports every project library source and the audit imports the root."""
+"""Check root and private-inclusive audit imports against every project library source."""
 
 from pathlib import Path
 import re
@@ -9,14 +9,16 @@ ROOT = Path(__file__).resolve().parents[1]
 sources = sorted((ROOT / "CopelandErdos").rglob("*.lean"))
 expected = {".".join(p.relative_to(ROOT).with_suffix("").parts) for p in sources}
 root_text = (ROOT / "CopelandErdos.lean").read_text()
-actual = set(re.findall(r"^import\s+(CopelandErdos(?:\.\w+)+)\s*$", root_text, re.M))
+actual = set(re.findall(r"^(?:public )?import\s+(CopelandErdos(?:\.\w+)+)\s*$", root_text, re.M))
 audit_text = (ROOT / "CopelandErdosAudit.lean").read_text()
+audited = set(re.findall(r"^import all\s+(CopelandErdos(?:\.\w+)*)\s*$", audit_text, re.M))
 errors = []
 if actual != expected:
     errors.append(f"root import mismatch: missing={sorted(expected - actual)}, "
                   f"extra={sorted(actual - expected)}")
-if not re.search(r"^import CopelandErdos\s*$", audit_text, re.M):
-    errors.append("audit does not import CopelandErdos")
+if audited != expected | {"CopelandErdos"}:
+    errors.append(f"audit import-all mismatch: missing={sorted((expected | {'CopelandErdos'}) - audited)}, "
+                  f"extra={sorted(audited - (expected | {'CopelandErdos'}))}")
 for path in sources + [ROOT / "CopelandErdos.lean"]:
     text = path.read_text()
     # This is a source hygiene check; the Lean audit is the authoritative axiom check.

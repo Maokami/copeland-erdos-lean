@@ -1,12 +1,44 @@
-import CopelandErdos
+module
+
+public meta import Lean.Elab.Command
+public meta import Lean.Util.CollectAxioms
+
+import all CopelandErdos
+import all CopelandErdos.Analysis.GeometricBounds
+import all CopelandErdos.Digits.BlockStream
+import all CopelandErdos.Digits.NatWord
+import all CopelandErdos.Digits.PrimeStream
+import all CopelandErdos.Digits.RealExpansion
+import all CopelandErdos.Normality.BoundaryCriterion
+import all CopelandErdos.Normality.NormalDigits
+import all CopelandErdos.Normality.PrefixTransfer
+import all CopelandErdos.Normality.PrimeConcatenation
+import all CopelandErdos.Normality.RealBridge
+import all CopelandErdos.NumberTheory.BadIntegerCounting
+import all CopelandErdos.NumberTheory.BadIntegers
+import all CopelandErdos.NumberTheory.BadPrimeMass
+import all CopelandErdos.NumberTheory.PrimeBounds
+import all CopelandErdos.NumberTheory.PrimeDigitMass
+import all CopelandErdos.NumberTheory.PrimePrefixBounds
+import all CopelandErdos.Probability.FiniteMoments
+import all CopelandErdos.Words.BadWordArithmetic
+import all CopelandErdos.Words.BadWords
+import all CopelandErdos.Words.BlockCounts
+import all CopelandErdos.Words.Concatenation
+import all CopelandErdos.Words.Occurrences
+import all CopelandErdos.Words.UniformBlocks
 
 /-!
 # Axiom audit
 
-Inspect every declaration in all imported `CopelandErdos` modules. Only `propext`,
-`Classical.choice`, and `Quot.sound` are allowed. The source inventory check in
-`scripts/check_lean_inventory.py` separately verifies that the root imports every library file.
+Inspect every declaration, including private helpers, in all imported `CopelandErdos` modules.
+Only `propext`, `Classical.choice`, and `Quot.sound` are allowed. The source inventory check in
+`scripts/check_lean_inventory.py` verifies both the root imports and these direct `import all`
+declarations. Direct imports are needed because ordinary imports do not expose private declarations
+in Lean's module system.
 -/
+
+meta section
 
 open Lean Elab Command
 

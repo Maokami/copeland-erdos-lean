@@ -1,8 +1,9 @@
 # 소수 이어 붙이기의 정규성: pencil-and-paper 증명
 
-상태: 메인 Astra가 전개한 **비형식 증명 초안**. 아래의 논증을 Lean 커널이 검사한 것은 아니다.
-Chebyshev 하한과 Bertrand 공준은 이미 알려진 정리로 사용한다. 대응 Mathlib 선언은
-[의존성 조사](mathlib-audit.md)에 기록한다. 새로 형식화할 논증과 기존 정리의 재사용을 구분한다.
+상태: **아래 소수 정규성 논증과 실제 실수 전개 연결을 Lean으로 구현·검증했다** (2026-11-18).
+메인 Astra가 종이 증명·계약·소스 대응을 검토하고, 사용자 지정 Sol 작업자가 구현했다.
+최종 근거는 [통합 검증](verification-complete.md), 선언 대응은 [증명 지도](proof-map.md)에 있다.
+Chebyshev와 Bertrand 등 기존 Mathlib 정리의 재사용과 새로 형식화한 논증을 구별한다.
 
 ## 1. 대상과 계수 규약
 
@@ -79,25 +80,33 @@ E S_m^4=m\mu_4+3m(m-1)v^2\le 3m^2\quad(m\ge1).
 C_w(u)=\sum_{r=0}^{k-1}Y_r,\qquad \sum_r m_r=\ell-k+1.
 \]
 
-고정 `ε>0`에 대해 `ℓ≥4k`, `ℓ≥2(k−1)/ε`라 하자. 각 그룹 크기는
-`m_r≥floor((ℓ−k+1)/k)≥ℓ/(2k)>0`이다.
-모든 그룹에 `|Y_r−p m_r|≤(ε/2)m_r`가 성립하면
+고정 `ε>0`에 대해 `ℓ≥k`, `ℓ≥2(k−1)/ε`라 하자.
+`τ=εℓ/(2k)>0`으로 놓는다. 모든 그룹에 `|Y_r−p m_r|≤τ`가 성립하면
 
 \[
 |C_w(u)-p\ell|
 \le\sum_r|Y_r-pm_r|+p(k-1)
-\le\frac\varepsilon2\ell+(k-1)\le\varepsilon\ell.
+\le k\tau+(k-1)\le\varepsilon\ell.
 \]
 
-따라서 `|C_w(u)/ℓ−p|>ε`인 단어는 적어도 한 그룹에서 위 부등식을 위반한다.
-(T)와 합집합 상계로 그 비율은
+따라서 `|C_w(u)/ℓ−p|>ε`인 단어는 적어도 한 그룹에서 `|Y_r−p m_r|>τ`를 만족한다.
+각 그룹은 실제 균등 곱 공간으로 옮길 수 있다. 사용한 좌표를 블록별로 나누고 남은 좌표를
+보완 좌표로 분리하면, 전체 단어 공간은 블록 튜플과 보완 좌표 공간의 곱과 일대일 대응한다.
+보완 좌표에 대한 균등 평균을 제거하면 블록 튜플에 대한 균등 평균을 얻는다.
+이는 소수나 자릿수에 관한 독립성 가정이 아니라 유한 곱 집합의 계수 대응이다.
+
+4차 모멘트 상계는 `m_r=0`일 때도 성립하며, `m_r≤ℓ`이므로
+`E[(Y_r−p m_r)^4]≤3m_r²≤3ℓ²`다. 유한 Markov 부등식과 합집합 상계로 나쁜 단어의 비율은
 
 \[
-\sum_r\frac{3}{(\varepsilon/2)^4m_r^2}
-\le\frac{192k^3}{\varepsilon^4\ell^2}.
+\sum_r\frac{3\ell^2}{\tau^4}
+=\frac{48k^5}{\varepsilon^4\ell^2}.
 \]
 
-작은 양의 `ℓ`는 유한 개이므로 상수를 키워 포함할 수 있다. 결과적으로 모든 `ℓ≥1`에서
+작은 양의 `ℓ`도 명시적으로 포함할 수 있다. 자연수 N을
+`N≥k`, `εN≥2(k−1)`이 되도록 고르고
+`K=48k⁵/ε⁴+N²+1`로 놓는다. `1≤ℓ<N`이면 나쁜 단어의 수는 전체 `b^ℓ`개 이하이며
+`ℓ²≤N²<K`이므로 같은 상계가 적용된다. 따라서 모든 `ℓ≥1`에서
 
 \[
 \#\{u\in\{0,\ldots,b-1\}^{\ell}:|C_w(u)/\ell-p|>\varepsilon\}
@@ -106,23 +115,42 @@ C_w(u)=\sum_{r=0}^{k-1}Y_r,\qquad \sum_r m_r=\ell-k+1.
 \]
 
 정규성은 고정된 `w`마다 증명하므로 모든 패턴에 대한 추가 합집합 상계는 필요 없다.
+이 경로는 최적 상수를 목표로 하지 않는다. 처음 설계의 `192k³/ε⁴` 상수보다 크지만,
+각 `m_r`의 양수성·하한을 따로 증명하지 않아도 되며 (W)의 결론은 동일하다.
 
 ## 4. X 이하의 나쁜 정수 개수
 
 양의 정수 `a`가 나쁘다는 것은 `digits_b(a)`가 (W)의 조건을 위반한다는 뜻이다.
 `B(X)`를 `1≤a≤X`인 나쁜 정수의 개수, `L=ℓ_b(X)`라 하자.
-길이가 `L/2`보다 짧은 단어들은 기하급수 합으로 `O_b(b^(L/2))`개다.
-나머지는 `ℓ≥L/2`이므로 (W)에서 `1/ℓ²≤4/L²`를 쓸 수 있다.
-`Σ_{ℓ≤L} b^ℓ=O_b(b^L)`, `b^L≤bX`를 합치면
+각 길이의 표준 정수 전개는 길이 ℓ의 단어 공간으로 단사적으로 들어간다.
+따라서 (W)를 길이별로 합하면 `B(X)≤K Σ_{ℓ=1}^L b^ℓ/ℓ²`이다.
+이 합은 다음 수렴 급수 하나로 제어할 수 있다.
 
 \[
-B(X)\le O_b(b^{L/2})+O_{b,k,\varepsilon}(b^L/L^2)
-=O_{b,k,\varepsilon}\!\left(\frac{X}{(\log X)^2}\right).
+C_b=\sum_{j=0}^{\infty}(j+1)^2b^{-j}<\infty.
+\]
+
+`1≤ℓ≤L`, `j=L−ℓ`이면 `L=ℓ+j≤ℓ(j+1)`이므로
+
+\[
+\frac{b^\ell/\ell^2}{b^L/L^2}
+=\left(\frac L\ell\right)^2 b^{-j}
+\le(j+1)^2b^{-j}.
+\]
+
+`ℓ↦L−ℓ`가 단사라는 사실과 비음수 급수의 부분합 상계를 사용하면 모든 L≥1에서
+`Σ_{ℓ=1}^L b^ℓ/ℓ²≤C_b b^L/L²`를 얻는다. `b^L≤bX`와
+`log X < L log b`로 X>1에서
+
+\[
+B(X)\le KC_b\frac{b^L}{L^2}
+\le KC_b b(\log b)^2\frac{X}{(\log X)^2}.
 \tag{B}
 \]
 
-마지막 등식에는 `L² b^(−L/2)→0`과 `L`이 `log X`와 상수배로 비교됨을 썼다.
-정수 경계 `floor/ceil`의 차이는 상수에 포함되며 Lean에서는 명시적으로 처리한다.
+이 경로는 중간 길이를 기준으로 두 합을 나누는 초기 설계를 대체한다.
+Lean에서는 정수 로그 길이 L을 유지한 상계로 구현해 아래 가중 길이 비율의 소멸에 직접 사용한다.
+실수 로그로 쓴 (B)의 점근 표기를 별도 선언으로 내보내지는 않는다.
 이는 모든 정수를 센 상계이므로 나쁜 **소수**에도 그대로 적용된다.
 
 각 정수의 길이가 `L=O_b(log X)`이므로 나쁜 소수들이 기여하는 자릿수의 합 `D_bad(X)`는
@@ -134,38 +162,37 @@ D_{\rm bad}(X)\le L B(X)=O_{b,k,\varepsilon}(X/\log X).
 
 ## 5. 전체 소수 자릿수는 적어도 X의 상수배다
 
-`π(X)`는 `X` 이하의 소수 개수다. 기존 Chebyshev 하한에서, 어떤 `c>0`에 대해
-충분히 큰 정수 `X`에
+`A_X`를 X 이하의 소수를 모두 이어 붙인 단어, `T_X=|A_X|`, `n=π(X)`라 하자.
+`θ(X)=Σ_{p≤X} log p`인 Chebyshev 함수를 사용한다. 고정 Mathlib의
+`Chebyshev.theta_ge`는 자연수 X에서 다음을 준다.
 
 \[
-\pi(X)\ge cX/\log X
-\tag{P}
+\theta(X)\ge X\log2-\log(X+1)-2\sqrt X\log X.
 \]
 
-를 얻는다. 실제 Mathlib의 더 강한 명시적 식은
-`(X log 2 − log(X+1))/log X ≤ π(X)`다.
-`log(X+1)/X→0`으로 예를 들어 `c=(log 2)/2`를 충분히 큰 `X`에 사용할 수 있다.
-
-`A_X`를 `X` 이하의 소수를 모두 이어 붙인 유한 단어, `T_X=|A_X|`, `n=π(X)`라 하자.
-`√X` 이하의 소수는 많아야 `floor √X`개이고, 나머지 소수 각각은
-`(log X)/(2 log b)`개 이상의 자릿수를 가진다. (P)로 `√X/n→0`이므로
-충분히 큰 `X`에
+`log(X+1)=o(X)`, `√X logX=o(X)`이므로 충분히 큰 X에서
+`θ(X)≥cX`, `c=(log2)/2>0`이다. 각 소수의 표준 전개는
+`p<b^{ℓ_b(p)}`를 만족하므로 `log p≤ℓ_b(p) log b`이다. 합을 취하면
 
 \[
-T_X\ge(n-\sqrt X)\frac{\log X}{2\log b}
-\ge\frac{n\log X}{4\log b}
-\ge\frac{cX}{4\log b}.
+T_X\log b\ge\theta(X)\ge cX,\qquad
+T_X\ge\frac c{\log b}X.
 \tag{L}
 \]
 
-동시에
+경계 개수는 Chebyshev의 소수 계수 상계로 제어한다. 충분히 큰 X에서
+`π(X)≤(log4+1)X/logX`이므로
 
 \[
-\frac n{T_X}\le\frac{4\log b}{\log X}\longrightarrow0.
+\frac n{T_X}\le
+\frac{(\log4+1)\log b}{c\log X}\longrightarrow0.
 \tag{E}
 \]
 
-이 논증에는 소수정리의 점근 등식이나 소수 개수의 상계가 필요하지 않다.
+이 단계는 소수정리의 점근 등식을 사용하지 않는다. 초기 설계에서는
+`π(X)≥cX/logX`와 √X 컷오프로 (L)을 얻었으나, 구현에서는 기존 θ 정리와
+소수 계수 상계를 재사용하는 위 경로를 택했다. M1c의 소수 계수 하한 정리는
+그대로 유효하지만 이 경로의 필수 의존성은 아니다. 이 절의 연결은 `PrimeDigitMass`와 `PrimePrefixBounds`에 구현했다.
 
 ## 6. 항 내부·나쁜 항·경계의 세 오차
 
@@ -213,7 +240,7 @@ T_X\ge(n-\sqrt X)\frac{\log X}{2\log b}
 \]
 
 `M→∞`이면 `n→∞`이며, 6절의 경계 수렴과 결합하여 (N)을 얻는다.
-Bertrand 대신 (P)로 다음 소수의 자릿수 성장을 제어할 수도 있지만,
+Bertrand 대신 소수 계수 하한으로 다음 소수의 자릿수 성장을 제어할 수도 있지만,
 이미 있는 더 직접적인 정리를 재사용하는 경로를 선택한다.
 
 ## 8. 숫자열에서 실제 상수로
@@ -248,8 +275,78 @@ R_N=\sum_{j=N}^{\infty}d_j b^{N-j-1},\qquad 0<R_N<1.
 - 고정 길이, 임의 정수 컷오프, 소수 경계, 임의 접두사, 실수 전개의 연결을 각각 다뤘다.
 - 4차 모멘트 경로는 소수의 Chebyshev 밀도에 충분하다. 원 논문의 모든 증가수열에 대한
   일반 정리를 이 더 약한 예외 집합 상계로 얻었다고 주장하지 않는다.
-- 종이 논증의 모든 부등식과 기존 Mathlib 선언 연결은 아직 Lean으로 구현해야 한다.
+- 최종 수렴과 실제 실수 연결까지의 Lean 선언은 [증명 지도](proof-map.md)에 대응시켰다.
+
+## 구현 대응 (M1a)
+
+파일: [`CopelandErdos/Words/Occurrences.lean`](../CopelandErdos/Words/Occurrences.lean).
+namespace: `CopelandErdos.Words`. 모든 선언은 generic `List α`와 `[DecidableEq α]`를 사용한다.
+
+| 종이 계약 | Lean 선언 |
+|---|---|
+| 유효 시작점과 패턴 일치 | `OccursAt` |
+| 겹치는 출현 계수와 cardinality | `occurrenceCount`, `occurrenceCount_eq_card`, `occursAt_start_lt` |
+| `C_w(u)≤\|u\|` | `occurrenceCount_le_length` |
+| host가 패턴보다 짧으면 0 | `occurrenceCount_eq_zero_of_length_lt` |
+| (J)의 하한 | `occurrenceCount_add_le_append` |
+| (J)의 상한, `w≠[]` | `occurrenceCount_append_le` |
+| 7절의 append 길이 t 상계 | `occurrenceCount_le_append`, `occurrenceCount_append_le_add_length` |
+
+빈 패턴의 계수를 0으로 정의한 것은 구현상의 명시적 확장이다. 이 문서의 정규성은 여전히
+양의 길이 패턴만 다룬다. (J)의 자연수 차이만 제시하지 않고, 뺄셈 전의 하한·상한을 각각 증명했다.
+[검증 기록](verification-m0-m1a.md)에 실제 빌드와 공리 감사 범위를 적었다.
+
+## 구현 대응 (M1b·M1c)
+
+파일: [`Probability/FiniteMoments.lean`](../CopelandErdos/Probability/FiniteMoments.lean),
+namespace `CopelandErdos.Probability`.
+구현은 Bernoulli만을 위한 식보다 일반적인 형태다. 비어 있지 않은 유한 α에서
+평균이 0인 함수 `f : α → ℝ`와 실제 곱 공간 `Fin m → α`를 사용한다.
+
+| 종이 계약 | Lean 선언 |
+|---|---|
+| 균등 평균 = 유한 합 / 원소 수 | `uniformMean_eq_sum_div_card` |
+| 곱 공간의 평균 분해 | `uniformMean_product`, `uniformMean_succ` |
+| 1·2·4차 모멘트 등식 | `mean_coordinateSum`, `mean_coordinateSum_sq`, `mean_coordinateSum_fourth` |
+| (M4)의 상계, 점별 `abs(f)≤1` | `mean_coordinateSum_fourth_le` |
+| 유한 Markov 부등식 | `uniformMean_card_le` |
+| (T)의 실제 사건 원소 수 비율 | `coordinateSum_tail_card_le` |
+
+정확한 모멘트 등식은 m=0도 포함하며, 꼬리 상계에는 m≥1과 η>0이 필요하다.
+M2a에서 `α = Fin k → Fin b`, `f(a)=1[a=w]−1/card α`에 대한 중심화와
+절댓값 조건, 비중첩 블록 그룹과 균등 곱 공간 사이의 계수 대응까지 증명했다.
+
+파일: [`NumberTheory/PrimeBounds.lean`](../CopelandErdos/NumberTheory/PrimeBounds.lean),
+namespace `CopelandErdos.NumberTheory`.
+
+| 종이 계약 | Lean 선언 |
+|---|---|
+| c=(log 2)/2의 양수성 | `primeCountingLowerConstant_pos` |
+| 충분히 큰 자연수 X에서의 소수 계수 하한 | `eventually_primeCounting_ge` |
+| 양의 상수 존재 형태의 하한 | `exists_pos_eventually_primeCounting_ge` |
+| 인접한 소수의 q≤2p | `consecutive_prime_le_two_mul` |
+| 증가하는 소수 나열에의 적용 | `nth_prime_succ_le_two_mul` |
+
+소수 하한은 Mathlib의 `Chebyshev.pi_ge`에서, 인접 소수 상계는 Bertrand 정리에서 도출했다.
+소수정리나 추가 미증명 가정은 사용하지 않았다. [통합 검증](verification-m1b-m1c.md)을 참고한다.
 
 고전 정리의 출처: A. H. Copeland and P. Erdős, *Note on Normal Numbers* (1946),
 [원문](https://users.renyi.hu/~p_erdos/1946-01.pdf). 본 문서의 4차 모멘트 전개는
 형식화 범위를 줄이기 위해 여기서 택한 별도의 증명 설계이며 새로운 정리나 최초 증명이라는 주장이 아니다.
+
+## 구현 대응 (M2a·M2b)
+
+| 종이 계약 | Lean 선언 |
+|---|---|
+| 단사 좌표 제한의 균등 평균 보존 | `Words.uniformMean_restrict` |
+| 비중첩 그룹의 좌표 단사성 | `Words.blockPosition_injective` |
+| 모든 겹치는 출현의 나머지 그룹 분해 | `Words.occurrenceCount_eq_sum_residueCount` |
+| 전체 단어 공간에서 그룹의 4차 모멘트 상계 | `Words.mean_residueDeviation_fourth_le` |
+| (W), 짧은 길이까지 포함 | `Words.exists_badWords_card_le` |
+| 표준 소수 전개, 선행 0 없음 | `Digits.primeBlock`, `Digits.head_primeBlock_ne_zero` |
+| 실제 무한 스트림과 유한 flatten 일치 | `Digits.ofFn_primeDigits_cumulativeLength` |
+| 실제 십진 스트림의 첫 여섯 자리 | `Digits.ofFn_primeDigits_six` |
+
+선언 앞에 `CopelandErdos.`를 붙인다. (W)는 충분히 큰 길이에서 `48k⁵/ε⁴`를
+사용하고 유한한 작은 길이를 K에 흡수한다. 최적 상수를 주장하지 않는다.
+[통합 검증 기록](verification-m2.md) 참조. 이 결과만으로 (N)이나 실수 정규성이 완성된 것은 아니다.
