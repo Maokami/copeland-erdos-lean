@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "lane": "proof-review",
+  "default_branch": "main",
+  "source_globs": [
+    "CopelandErdos/**/*.lean"
+  ],
+  "prompt_file": ".github/continuous-ai/proof-review.md",
+  "adapter": "lean",
+  "model": "claude-sonnet-5-5",
+  "batch_size": 6,
+  "max_turns": 12,
+  "policy_files": [
+    "AGENTS.md",
+    "docs/proof.md",
+    "docs/implementation-plan.md"
+  ]
+}

@@ -1,0 +1,36 @@
+name: Continuous AI (proof-review)
+# Manual pilot only; add a cadence after reviewing a successful pilot and no-op rerun.
+on:
+  workflow_dispatch:
+    inputs:
+      batch:
+        type: string
+        default: auto
+      retry_failed:
+        type: boolean
+        default: false
+      reset_quota:
+        description: Reset an exhausted quota recovery budget
+        type: boolean
+        default: false
+permissions: {}
+concurrency:
+  group: continuous-ai-proof-review
+  cancel-in-progress: false
+jobs:
+  scan:
+    if: >-
+      github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      issues: write
+    uses: Maokami/continuous-ai-kit/.github/workflows/scan-report.yml@0444e53db6e9fa5dc9a750f40bd08a91fd0bcd5c
+    with:
+      config: .github/continuous-ai/proof-review.json
+      default_branch: "main"
+      batch: ${{ inputs.batch || 'auto' }}
+      retry_failed: ${{ inputs.retry_failed || false }}
+      recovery_only: false
+      reset_quota: ${{ inputs.reset_quota || false }}
+    secrets:
+      claude_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

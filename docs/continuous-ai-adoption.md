@@ -1,6 +1,6 @@
 # Continuous AI 도입 설계
 
-2026-11-18 현재 **설계 단계**다. 사용자는 최종 정규성 증명과 적절한 시점의
+2026-11-18 현재 **수학 증명 완료, 배포 준비 단계**다. 사용자는 최종 정규성 증명과 적절한 시점의
 Continuous AI 배포를 승인했다. 공개 원격 저장소는 생성했으며 예약 workflow는 아직 없다.
 저장소: https://github.com/Maokami/copeland-erdos-lean .
 사용자는 공개 저장소를 선택했다. 소스 게시·CI·AI pilot은 아직 실행하지 않았다.
@@ -8,10 +8,10 @@ Continuous AI 배포를 승인했다. 공개 원격 저장소는 생성했으며
 
 ## 관찰한 상태와 첫 적용 범위
 
-로컬 main의 최초 scaffold HEAD는 `36dc68a575cc9af01b6d43dce09257a9ab72a3df`다.
-M1/M2 구현과 문서는 미커밋 상태이므로 Kit의 committed-source inventory는
-현재 작업 파일 전체를 나타내지 않는다. 검증된 구현을 보존해 커밋한 뒤
-정확한 SHA에서 입력 목록을 다시 확인해야 한다.
+수학 구현 커밋은 `1e4d34163b388ab533a80f6573dbadf46ad0b114`다.
+메인이 pod에서 전체 빌드, 새 공리 감사, 공개 예제를 직접 재실행했고
+23개 라이브러리와 루트의 472개 선언을 확인했다. 최초 scaffold만 있던 시점의
+Kit inventory는 현재 입력으로 사용하지 않고, 이 커밋에서 다시 선택한다.
 
 반복되는 작업은 수학 계약과 실제 선언의 차이 확인, 미완성 의존성 파악,
 새 구현의 빌드·공리 감사다. 컴파일과 import 누락은 결정적 CI가 처리하고,
@@ -26,7 +26,8 @@ M1/M2 구현과 문서는 미커밋 상태이므로 Kit의 committed-source inve
    `CopelandErdos/**/*.lean`, `docs/proof.md`, 구현 계획을 근거로 선언·가정·문서 불일치를
    최대 세 개 제안하며, 유효한 빈 결과도 허용한다. 실제 선택 파일은 generator 출력으로 검토한다.
 3. 같은 입력 배치의 재실행에서 중복 보고와 불필요한 모델 호출이 없는지 확인한다.
-   유용한 결과가 확인된 뒤 신규 조사 주기를 설정한다. 초기 제안은 6시간이며 아직 활성화하지 않았다.
+   현재 정규성 목표는 완료됐으므로 신규 수학 연구를 6시간마다 시작하는 schedule은 활성화하지 않는다.
+   먼저 수동 유지보수 검토를 평가하고 입력 변경에 따른 후속 조사의 유용성을 확인한다.
 4. 구현 PR이 생기면 실제 required check 이름을 확인하고 PR triage를 추가한다.
 
 ## 제안과 구현의 구분
@@ -53,5 +54,23 @@ Sol을 실행할 수 있다고 가정하지 않고, API 과금 경로로 임의 
 - 동일 입력의 중복, 반복 실패 또는 정규성 목표 완료 시 신규 조사 schedule을 중지한다.
 - 첫 pilot의 실행 시간·모델 사용량·유용한 결과 수는 아직 측정하지 않았다.
 
-현재 배포를 보류하는 이유는 수학 정리 전체의 완료를 기다리기 때문이 아니라,
-검증된 입력 revision과 인증 경로를 먼저 확정해야 하기 때문이다.
+현재 AI 모델 실행은 새 저장소의 구독 토큰 등록을 기다리고 있다.
+공개 CI와 소스 배포는 이 인증 단계와 독립적으로 진행한다.
+
+## 구성 파일 검증
+
+- Kit pin: `0444e53db6e9fa5dc9a750f40bd08a91fd0bcd5c` (공개 원격 커밋 확인).
+- Caller: `.github/workflows/continuous-ai-proof-review.yml`.
+- Config/prompt: `.github/continuous-ai/proof-review.json`, `.md`.
+- 선택: 라이브러리 23개 파일, 138,986 bytes, 4개 배치(6/6/6/5).
+- Policy: AGENTS, 종이 증명, 구현 계획. source coverage 목록에서는 제외한다.
+- 모델: Kit 기본 `claude-sonnet-5-5`, max-turns 12, 후보 최대 3개.
+- 범위: 완료된 정리의 명세 대응과 구체적인 재사용 개선 후보만 보고한다.
+- 현재 트리거: **main의 수동 dispatch만**. schedule 없음, recovery_only=false.
+- Kit generator/동일 config validator, 전체 workflow actionlint, diff 검사를 통과했다.
+- 메인은 caller의 권한·핀·트리거, prompt 계약, Kit 검증/게시 경로를 검토했다.
+  Kit 전체 코드의 새 독립 감사나 현재 저장소의 live pilot을 했다는 뜻은 아니다.
+- Secret이 등록되면 batch 0 수동 pilot과 동일 batch/digest 재실행을 검증한다.
+
+최종 정규성 목표는 완료됐으므로 미완성 증명을 계속 시도하는 자동 writer는 배포하지 않는다.
+유지보수 검토의 유용성을 확인하기 전 신규 조사 schedule도 활성화하지 않는다.
