@@ -39,7 +39,7 @@ M5의 공개 예제·증명 지도·CI 설정도 마련했다. 원격 실행·Co
 | M2b | `Digits/PrimeStream` | `Nat.digits` reverse, 누적 길이, 무한 스트림, prefix와 유한 flatten의 일치 | M1a |
 | M3 | `Normality/PrimeConcatenation` | 나쁜 정수≤`O(X/log²X)`, 전체 자릿수≥`cX`, 경계 오차, 모든 접두사 수렴 | M1c, M2a, M2b |
 | M4 | `Normality/RealBridge` | `Real.ofDigits`의 표준 자리 일치, 십진 상수의 무조건부 정규성 | M3 |
-| M5 | blueprint·release | 선언 연결, 전체 build와 공리 감사, 문서의 가정 점검, 블로그용 예제 | M4 |
+| M5 | 증명 지도·공개 예제·CI | 선언 연결, 전체 build와 공리 감사, 문서의 가정 점검, 블로그용 예제 | M4 |
 
 **완료된 구현:** M3는 예외 정수의 정수 로그 길이 상계, Chebyshev θ를 통한
 총자릿수 하한, 경계·다음 블록 비율의 소멸을 실제 소수 숫자열에 연결했다.

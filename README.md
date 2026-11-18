@@ -53,7 +53,7 @@ lake env lean examples/Normality.lean
 
 개발 환경의 무거운 빌드는 `rdev x bertha-ultra --task ce-geometric -- lake build`로
 실행했다. Python의 유한 검사는 별도의 회귀 검사이며 일반 정리의 증명이 아니다.
-GitHub CI는 같은 빌드·검사를 실행하도록 구성했다. 원격 실행 결과와 자동화 상태는
+GitHub에서도 같은 빌드·검사가 통과했다. 원격 실행 결과와 자동화 상태는
 [도입 기록](docs/continuous-ai-adoption.md)에서 구별한다.
 
 ## 범위와 배경

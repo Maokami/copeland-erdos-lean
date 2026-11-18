@@ -1,9 +1,9 @@
 # Continuous AI 도입 설계
 
-2026-11-18 현재 **수학 증명 완료, 배포 준비 단계**다. 사용자는 최종 정규성 증명과 적절한 시점의
+2026-11-18 현재 **수학 증명·공개 배포·CI 검증 완료, AI 인증 대기**다. 사용자는 최종 정규성 증명과 적절한 시점의
 Continuous AI 배포를 승인했다. 공개 원격 저장소는 생성했으며 예약 workflow는 아직 없다.
 저장소: https://github.com/Maokami/copeland-erdos-lean .
-사용자는 공개 저장소를 선택했다. 소스 게시·CI·AI pilot은 아직 실행하지 않았다.
+사용자는 공개 저장소를 선택했다. 소스 게시와 GitHub CI 검증을 완료했다. AI pilot은 아직 실행하지 않았다.
 새 저장소의 Actions secret 목록이 비어 있음을 확인했고 구독 토큰 등록을 요청했다.
 
 ## 관찰한 상태와 첫 적용 범위
@@ -74,3 +74,21 @@ Sol을 실행할 수 있다고 가정하지 않고, API 과금 경로로 임의 
 
 최종 정규성 목표는 완료됐으므로 미완성 증명을 계속 시도하는 자동 writer는 배포하지 않는다.
 유지보수 검토의 유용성을 확인하기 전 신규 조사 schedule도 활성화하지 않는다.
+
+## 공개 배포 검증
+
+- 공개 저장소: https://github.com/Maokami/copeland-erdos-lean .
+- 게시 커밋: `ae126fe34c79a730d8b33cc29c58cbc70acbfe68`.
+- 첫 GitHub CI: [44265383894](https://github.com/Maokami/copeland-erdos-lean/actions/runs/44265383894), **success**.
+- `Lean CI`에서 Python 검사, Lean 빌드, 새 공리 감사, 공개 최종 정리 예제 모두 통과했다.
+- GitHub에 CI와 수동 `Continuous AI (proof-review)` workflow가 active 상태로 등록됨을 확인했다.
+  active 등록은 AI 모델 실행 성공을 뜻하지 않는다.
+- 최초 HTTPS push는 기존 OAuth 자격의 workflow scope 부족으로 거절됐고,
+  이미 구성된 SSH 인증으로 같은 저장소에 게시했다. 권한 정책을 변경하지 않았다.
+- 마지막으로 확인한 Actions secret 목록은 비어 있다. `CLAUDE_CODE_OAUTH_TOKEN` 등록은 사용자에게 요청했으며,
+  값은 읽거나 기록하지 않았다. 따라서 실제 AI 실행·검증·게시와 동일 입력 no-op 관찰은 아직 없다.
+- 현재 scheduler와 자동 writer는 없다. 검증된 정리를 유지하며 수동 검토 pilot부터 평가한다.
+
+구독 인증 절차는 [Anthropic 공식 설정 문서](https://code.claude.com/docs/en/github-actions),
+사용 모델 ID는 [공식 Sonnet 5.5 문서](https://platform.claude.com/docs/en/models/sonnet-5-5/overview)에서 확인했다.
+후속 문서 기록 커밋은 수학 소스와 workflow를 바꾸지 않는다.
